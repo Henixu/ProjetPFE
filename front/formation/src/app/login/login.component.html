@@ -34,6 +34,10 @@
                         <button class="btn btn-primary shadow" type="submit" [disabled]="loginForm.invalid">Log in</button>
                     </div>
                 </form>
+                <button (click)="microsoftLogin()" class="btn-microsoft">
+                    <img src="assets/img/illustrations/Microsoft_logo.svg.png" alt="Microsoft Logo" class="icon" />
+                    Login with Microsoft
+                  </button>
                 <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
                 <p class="text-muted"><a href="forgotten-password.html">Forgot your password?</a></p>
             </div>

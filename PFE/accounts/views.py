@@ -109,3 +109,86 @@ def user_logout(request):
             return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
+
+
+
+import msal
+from django.conf import settings
+from django.http import HttpResponseRedirect
+
+def microsoft_login(request):
+    authority = f"https://login.microsoftonline.com/{settings.MS_TENANT}"
+    client = msal.ConfidentialClientApplication(
+        settings.MS_CLIENT_ID,
+        authority=authority,
+        client_credential=settings.MS_CLIENT_SECRET
+    )
+    auth_url = client.get_authorization_request_url(
+        settings.MS_SCOPES,
+        redirect_uri=settings.MS_REDIRECT_URI,
+        state="optional-csrf-token-or-random-string"  # you may include state for security
+    )
+    
+    return HttpResponseRedirect(auth_url)
+
+
+# views_microsoft.py (continued)
+import json
+from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token  # assuming you're using DRF TokenAuth
+import msal
+
+User = get_user_model()
+
+def microsoft_callback(request):
+    code = request.GET.get('code', None)
+    if not code:
+        return HttpResponse("No code provided", status=400)
+    
+    authority = f"https://login.microsoftonline.com/{settings.MS_TENANT}"
+    client = msal.ConfidentialClientApplication(
+        settings.MS_CLIENT_ID,
+        authority=authority,
+        client_credential=settings.MS_CLIENT_SECRET
+    )
+    
+    result = client.acquire_token_by_authorization_code(
+        code,
+        scopes=settings.MS_SCOPES,
+        redirect_uri=settings.MS_REDIRECT_URI
+    )
+    print(result)
+    if "id_token_claims" not in result:
+        return HttpResponse("Authentication failed", status=400)
+    
+    id_claims = result["id_token_claims"]
+    email = id_claims.get("preferred_username")  # usually the email is here
+    first_name = id_claims.get("given_name", "")
+    last_name = id_claims.get("family_name", "")
+    
+    # Verify the email domain
+    if not email or not email.endswith("@soprahr.com"):
+        return HttpResponse("Unauthorized email domain", status=403)
+    
+    # Create or get the user
+    user, created = User.objects.get_or_create(email=email, defaults={
+        "username": email,
+        "first_name": first_name,
+        "last_name": last_name,
+    })
+    
+    # Optionally, update user details if needed
+    if not created:
+        user.first_name = first_name
+        user.last_name = last_name
+        user.save()
+    
+    # Generate or retrieve a token (like in your other views)
+    token, _ = Token.objects.get_or_create(user=user)
+    
+    # Redirect back to your Angular app.
+    # For example, append the token as a query parameter (ensure HTTPS and consider security implications)
+    angular_app_url = "http://localhost:4200/callback"
+    redirect_url = f"{angular_app_url}?token={token.key}"
+    return HttpResponseRedirect(redirect_url)

@@ -145,3 +145,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# settings.py
+MS_CLIENT_ID = '55b3d53d-3434-4490-bfc0-e52ed574d0b9'
+MS_CLIENT_SECRET = 'uKV8Q~6FDzB3YG0PLOBXHBUb56UVTDKA7QhrQczf'
+MS_TENANT = '8b87af7d-8647-4dc7-8df4-5f69a2011bb5'
+# This should match the Redirect URI set in Azure AD.
+MS_REDIRECT_URI = 'http://localhost:8000/microsoft-callback'
+# Define the scopes you need (e.g., basic profile info)
+MS_SCOPES = ['User.Read']

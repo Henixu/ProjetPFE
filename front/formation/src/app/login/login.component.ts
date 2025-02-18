@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { MsalService } from '@azure/msal-angular';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -11,7 +13,12 @@ export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private http: HttpClient
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
@@ -35,5 +42,10 @@ export class LoginComponent {
         console.error('Login error', err);
       }
     });
+  }
+
+  microsoftLogin(): void {
+    // Redirect to your Django endpoint for Microsoft login
+    window.location.href = 'http://127.0.0.1:8000/microsoft-login';
   }
 }

@@ -23,4 +23,6 @@ urlpatterns = [
     path('register', viewsaccounts.register, name='register'),
     path('login', viewsaccounts.user_login, name='login'),
     path('logout', viewsaccounts.user_logout, name='logout'),
+    path('microsoft-login', viewsaccounts.microsoft_login, name='microsoft-login'),
+    path('microsoft-callback', viewsaccounts.microsoft_callback, name='microsoft-callback'),
 ]
