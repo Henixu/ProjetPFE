@@ -35,7 +35,10 @@
                     </div>
                 </form>
                 <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
-                <p class="text-muted"><a href="forgotten-password.html">Forgot your password?</a></p>
+                <p class="text-muted">
+                    <a routerLink="/forget-password">Forgot your password?</a>
+                  </p>
+                  
             </div>
         </div>
     </div>

@@ -145,3 +145,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.mailtrap.io"  # Mailtrap SMTP host
+EMAIL_PORT = 2525  # Mailtrap's recommended port
+EMAIL_USE_TLS = True  # Mailtrap requires TLS
+EMAIL_USE_SSL = False  # SSL should be False when TLS is True
+EMAIL_HOST_USER = "c6dfa52796cff6"  # From Mailtrap dashboard
+EMAIL_HOST_PASSWORD = "791eed10585439"  # From Mailtrap dashboard
+DEFAULT_FROM_EMAIL = "noreply@example.com"

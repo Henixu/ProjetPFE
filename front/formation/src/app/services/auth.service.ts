@@ -17,4 +17,8 @@ export class AuthService {
   signup(first_name: string, last_name: string, email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { first_name, last_name, email, password });
   }
+
+  sendResetPasswordEmail(email: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/reset_password`, { email });
+  }
 }
