@@ -23,13 +23,13 @@ urlpatterns = [
     path('register', viewsaccounts.register, name='register'),
     path('login', viewsaccounts.user_login, name='login'),
     path('logout', viewsaccounts.user_logout, name='logout'),
-<<<<<<< HEAD
+
     path('microsoft-login', viewsaccounts.microsoft_login, name='microsoft-login'),
     path('microsoft-callback', viewsaccounts.microsoft_callback, name='microsoft-callback'),
-=======
+
     path('reset_password', viewsaccounts.reset_password_request, name='reset_assword'),
     path('reset_password_confirm', viewsaccounts.reset_password_confirm, name='reset_password_confirm'),
     
->>>>>>> resetpassword
+
 ]
 

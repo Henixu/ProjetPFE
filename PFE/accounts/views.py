@@ -110,7 +110,7 @@ def user_logout(request):
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
-<<<<<<< HEAD
+
 
 
 import msal
@@ -193,7 +193,8 @@ def microsoft_callback(request):
     angular_app_url = "http://localhost:4200/callback"
     redirect_url = f"{angular_app_url}?token={token.key}"
     return HttpResponseRedirect(redirect_url)
-=======
+
+
 import json
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -286,4 +287,4 @@ def reset_password_confirm(request):
             return JsonResponse({"error": str(e)}, status=400)
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
->>>>>>> resetpassword
+
