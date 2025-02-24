@@ -110,6 +110,7 @@ def user_logout(request):
     else:
         return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
+<<<<<<< HEAD
 
 
 import msal
@@ -192,3 +193,97 @@ def microsoft_callback(request):
     angular_app_url = "http://localhost:4200/callback"
     redirect_url = f"{angular_app_url}?token={token.key}"
     return HttpResponseRedirect(redirect_url)
+=======
+import json
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
+@csrf_exempt
+def reset_password_request(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            email = data.get("email")
+            print(email)
+            if not email:
+                return JsonResponse({"error": "Email is required."}, status=400)
+            
+            try:
+                user = User.objects.get(email=email)
+                #print(user)
+            except User.DoesNotExist:
+                return JsonResponse({"error": "User with this email does not exist."}, status=404)
+            
+            # Generate token and UID for the user
+            token_generator = PasswordResetTokenGenerator()
+            token = token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            
+            # Build the reset link pointing to your Angular frontend route
+            # Adjust the URL as per your Angular app's route
+            reset_link = f"http://localhost:4200/new-password/?uid={uid}&token={token}"
+            
+            subject = "Reset Your Password"
+            message = (
+                f"Hi {user.first_name},\n\n"
+                f"Click the link below to reset your password:\n{reset_link}\n\n"
+                "If you did not request this, please ignore this email."
+            )
+            from_email = "rahma.othmani@soprahr.com"  # Should match EMAIL_HOST_USER
+            recipient_list = [user.email]
+
+            try:
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                print("✅ Email sent successfully!")
+            except Exception as e:
+                print(f"❌ Error sending email: {e}")
+            return JsonResponse({"message": "Password reset email sent."}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
+
+import json
+from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str  # For Django >= 3.1; use force_text for older versions
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+
+@csrf_exempt
+def reset_password_confirm(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            uidb64 = data.get("uid")
+            token = data.get("token")
+            new_password = data.get("new_password")
+            
+            if not all([uidb64, token, new_password]):
+                return JsonResponse({"error": "Missing parameters."}, status=400)
+            
+            try:
+                uid = force_str(urlsafe_base64_decode(uidb64))
+                user = User.objects.get(pk=uid)
+            except Exception:
+                return JsonResponse({"error": "Invalid UID."}, status=400)
+            
+            token_generator = PasswordResetTokenGenerator()
+            if token_generator.check_token(user, token):
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({"message": "Password has been reset successfully."}, status=200)
+            else:
+                return JsonResponse({"error": "Invalid or expired token."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)
+>>>>>>> resetpassword

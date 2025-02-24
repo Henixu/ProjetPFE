@@ -146,6 +146,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+<<<<<<< HEAD
 
 # settings.py
 MS_CLIENT_ID = '55b3d53d-3434-4490-bfc0-e52ed574d0b9'
@@ -155,3 +156,13 @@ MS_TENANT = '8b87af7d-8647-4dc7-8df4-5f69a2011bb5'
 MS_REDIRECT_URI = 'http://localhost:8000/microsoft-callback'
 # Define the scopes you need (e.g., basic profile info)
 MS_SCOPES = ['User.Read']
+=======
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.mailtrap.io"  # Mailtrap SMTP host
+EMAIL_PORT = 2525  # Mailtrap's recommended port
+EMAIL_USE_TLS = True  # Mailtrap requires TLS
+EMAIL_USE_SSL = False  # SSL should be False when TLS is True
+EMAIL_HOST_USER = "c6dfa52796cff6"  # From Mailtrap dashboard
+EMAIL_HOST_PASSWORD = "791eed10585439"  # From Mailtrap dashboard
+DEFAULT_FROM_EMAIL = "noreply@example.com"
+>>>>>>> resetpassword
