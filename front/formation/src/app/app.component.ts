@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ToasterPosition } from 'ng-angular-popup';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +9,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'formation';
+  public ToasterPosition = ToasterPosition;
 }

@@ -9,8 +9,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './home/home.component';
 import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 import { NewPasswordComponent } from './new-password/new-password.component';
-
-
+import { NgToastModule } from 'ng-angular-popup';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +25,8 @@ import { NewPasswordComponent } from './new-password/new-password.component';
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    NgToastModule,
+    BrowserAnimationsModule,
    
   ],
   providers: [

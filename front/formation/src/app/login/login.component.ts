@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { MsalService } from '@azure/msal-angular';
 import { HttpClient } from '@angular/common/http';
+import { NgToastService, ToasterPosition, ToastType } from 'ng-angular-popup';
 @Component({
   selector: 'app-login',
   standalone: false,
@@ -14,7 +15,7 @@ export class LoginComponent {
   errorMessage: string = '';
 
   constructor(
-    
+    private toast: NgToastService,
     private fb: FormBuilder,
     private authService: AuthService,
     private http: HttpClient
@@ -27,7 +28,7 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Please enter valid credentials.';
+      this.toast.warning('Please enter valid credentials.', 'Warning', 3000);
       return;
     }
 
@@ -35,11 +36,14 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: (response) => {
         console.log('Login successful', response);
-        // Handle login success (e.g., store token, redirect)
+        this.toast.success('Login successful welcome', 'Success', 3000);
+
+        
       },
       error: (err) => {
         this.errorMessage = 'Invalid email or password.';
-        console.error('Login error', err);
+        
+        this.toast.danger(err.error.error, 'Error', 3000);
       }
     });
   }
@@ -47,5 +51,6 @@ export class LoginComponent {
   microsoftLogin(): void {
     // Redirect to your Django endpoint for Microsoft login
     window.location.href = 'http://127.0.0.1:8000/microsoft-login';
+    this.toast.success('Login successful welcome', 'Success', 3000);
   }
 }
