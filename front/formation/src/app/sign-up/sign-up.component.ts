@@ -2,17 +2,27 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { NgToastService } from 'ng-angular-popup';
+import { AnimationEvent, trigger, state, style, transition, animate } from '@angular/animations';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-sign-up',
   standalone: false,
   templateUrl: './sign-up.component.html',
-  styleUrl: './sign-up.component.css'
+  styleUrl: './sign-up.component.css',
+  animations: [
+    trigger('fadeAnimation', [
+      state('in', style({ opacity: 1 })),
+      state('out', style({ opacity: 0 })),
+      transition('in => out', animate('500ms ease-out'))
+    ])
+  ]
 })
 export class SignUpComponent {
   signupForm: FormGroup;
   errorMessage: string = '';
+  animationState: 'in' | 'out' = 'in';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private toast: NgToastService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private toast: NgToastService, private router: Router) {
     this.signupForm = this.fb.group({
       first_name: ['', [Validators.required, Validators.minLength(2)]],
       last_name: ['', [Validators.required, Validators.minLength(2)]],
@@ -47,6 +57,8 @@ export class SignUpComponent {
         console.log('Signup successful', response);
         this.toast.success('Signup successful. Welcome!', 'Success', 3000);
         this.signupForm.reset();
+        this.animationState = 'out';
+        
         // Redirect to login page with animation
         document.body.classList.add('animate__animated', 'animate__fadeOut');
         setTimeout(() => {
@@ -58,7 +70,13 @@ export class SignUpComponent {
         console.error('Signup error', err);
         this.errorMessage = "Signup failed. Try again.";
         this.toast.danger(err.error.error, 'Error', 3000);
+        
       }
     });
+  }
+  onAnimationDone(event: AnimationEvent) {
+    if (event.toState === 'out') {
+      this.router.navigate(['/login']);
+    }
   }
 }
